@@ -89,7 +89,7 @@ async function carregarPerfilUsuario(userId) {
 
     const { data } = await supabaseClient.from('profiles').select('*, tenants ( nome_fantasia )').eq('id', userId).single();
     if (!data) { 
-        perfilLogado = { id: userId, tenant_id: null, perfil: 'admin', nome_completo: emailUser };
+        perfilLogado = { id: userId, tenant_id: null, perfil: 'admin', nome_completo: emailUser, email: emailUser };
     } else {
         perfilLogado = data;
     }
@@ -212,6 +212,7 @@ async function handleCadastrarTenantMaster(e) {
             id: authData.user.id,
             tenant_id: tenantId,
             nome_completo: nomeProprietario,
+            email: email,
             perfil: 'admin',
             salario_base: 0,
             comissao_percentual: 0
@@ -340,7 +341,7 @@ function calcularPrecoPorMarkup() {
     }
 }
 
-// GESTÃO DE USUÁRIOS E EQUIPE (COM EDIÇÃO E SUPORTE CORRIGIDO)
+// GESTÃO DE USUÁRIOS E EQUIPE (COM SUPORTE A EMAIL E EDIÇÃO)
 async function carregarUsuariosUI() {
     const lista = document.getElementById('lista-usuarios-cadastrados');
     if (!lista || !perfilLogado || !perfilLogado.tenant_id) return;
@@ -365,7 +366,7 @@ async function carregarUsuariosUI() {
         div.innerHTML = `
             <div>
                 <span class="font-black text-slate-200 uppercase block">${u.nome_completo || 'Sem Nome'}</span>
-                <span class="text-[10px] text-cyan-400 font-bold uppercase">${u.perfil} | Salário: ${formatarBRL(u.salario_base)} | Comissão: ${u.comissao_percentual || 0}%</span>
+                <span class="text-[10px] text-cyan-400 font-bold uppercase">${u.perfil} | E-mail: ${u.email || '-'} | Salário: ${formatarBRL(u.salario_base)} | Comissão: ${u.comissao_percentual || 0}%</span>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="prepararEdicaoUsuario('${u.id}')" class="text-slate-400 hover:text-cyan-400 p-1.5 rounded" title="Editar Usuário">
@@ -418,12 +419,13 @@ async function salvarUsuario(e) {
     }
 
     const nome = document.getElementById('usr-nome').value.trim();
+    const email = document.getElementById('usr-email').value.trim();
     const perfil = document.getElementById('usr-perfil').value;
     const salario = parseFloat(document.getElementById('usr-salario').value) || 0;
     const comissao = parseFloat(document.getElementById('usr-comissao').value) || 0;
 
-    if (!nome) {
-        alert('Preencha o nome do usuário.');
+    if (!nome || !email) {
+        alert('Preencha o nome e o e-mail do usuário.');
         return;
     }
 
@@ -433,6 +435,7 @@ async function salvarUsuario(e) {
             .from('profiles')
             .update({
                 nome_completo: nome,
+                email: email,
                 perfil: perfil,
                 salario_base: salario,
                 comissao_percentual: comissao
@@ -452,6 +455,7 @@ async function salvarUsuario(e) {
                 id: novoId,
                 tenant_id: perfilLogado.tenant_id,
                 nome_completo: nome,
+                email: email,
                 perfil: perfil,
                 salario_base: salario,
                 comissao_percentual: comissao

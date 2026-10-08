@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KASIVAE CAR V2 - Sistema de Gestão ERP</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,18 +26,14 @@
         }
     </script>
     
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- ARQUIVO EXTERNO DE CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-[#060911] text-slate-100 font-sans antialiased h-screen flex overflow-hidden">
 
-    <!-- SIDEBAR DE NAVEGAÇÃO -->
     <aside id="sidebar" class="w-64 bg-[#0a0f1d] border-r border-slate-800 flex flex-col z-20 shrink-0">
         <div class="p-4 border-b border-slate-800 flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-black font-black text-xl shadow-[0_0_12px_rgba(0,240,255,0.5)]">
@@ -50,7 +45,6 @@
             </div>
         </div>
 
-        <!-- Seletor Rápido de Perfil para Testes -->
         <div class="p-3 bg-slate-900/90 m-3 rounded-xl border border-slate-800 text-xs">
             <label class="block text-slate-400 font-semibold mb-1">Simular Perfil Ativo:</label>
             <select id="role-selector" onchange="alterarPerfilSimulacao(this.value)" class="w-full bg-slate-950 text-cyan-300 border border-slate-700 rounded-lg p-2 focus:outline-none focus:border-cyan-500">
@@ -65,7 +59,6 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto p-3 space-y-1">
-            <!-- Menu exclusivo do Super Admin -->
             <div id="menu-super-admin-group" class="hidden space-y-1">
                 <div class="text-[10px] font-black text-rose-500 uppercase px-2 pt-2 pb-1 tracking-wider">Painel Master</div>
                 <button onclick="navegarPara('super-admin')" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg hover:bg-slate-800/60 text-rose-300 transition-all">
@@ -116,10 +109,8 @@
         </div>
     </aside>
 
-    <!-- ÁREA PRINCIPAL -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         
-        <!-- HEADER TOP BAR -->
         <header class="bg-[#0a0f1d] border-b border-slate-800 px-6 py-3.5 flex justify-between items-center shrink-0">
             <h1 id="screen-title" class="text-lg font-black tracking-wide text-cyan-400 uppercase">NOVA ENTRADA</h1>
             <div class="flex items-center gap-4 text-xs text-slate-300">
@@ -134,10 +125,8 @@
             </div>
         </header>
 
-        <!-- VIEWS / TELAS DINÂMICAS -->
         <section class="flex-1 overflow-y-auto p-4 md:p-6 bg-[#060911]">
 
-            <!-- 0. TELA: SUPER ADMIN (GESTÃO DE EMPRESAS) -->
             <div id="screen-super-admin" class="view-screen hidden space-y-6 max-w-4xl mx-auto">
                 <div class="bg-slate-900/90 border border-rose-500/40 p-6 rounded-2xl space-y-5 shadow-xl">
                     <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
@@ -148,7 +137,6 @@
                             <p class="text-xs text-slate-400">Registo de novos estabelecimentos e contas de acesso proprietárias</p>
                         </div>
                     </div>
-
                     <form onsubmit="handleCadastrarTenantMaster(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome do Lava-Rápido *</label>
@@ -173,7 +161,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
                     <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Empresas Cadastradas no Sistema</h3>
                     <div class="overflow-x-auto">
@@ -191,7 +178,6 @@
                 </div>
             </div>
 
-            <!-- 1. TELA: NOVA ENTRADA -->
             <div id="screen-nova-entrada" class="view-screen hidden max-w-2xl mx-auto glass-panel p-6 rounded-2xl border border-cyan-500/30 neon-glow relative overflow-hidden">
                 <form id="form-nova-entrada" onsubmit="salvarNovaEntrada(event)" class="space-y-5 relative z-10">
                     <div>
@@ -212,7 +198,6 @@
                         </div>
                     </div>
 
-                    <!-- ATRIBUIÇÃO DOS 3 ESTÁGIOS DA EQUIPE -->
                     <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3">
                         <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-users-gear text-amber-400"></i> Atribuição da Equipe (3 Estágios)
@@ -247,7 +232,6 @@
                                 </button>
                             </div>
                         </div>
-
                         <div id="lista-itens-entrada-preview" class="bg-slate-950 border border-slate-800 rounded-xl p-3 min-h-[80px] space-y-2">
                             <p class="text-xs text-slate-500 text-center py-3" id="msg-sem-itens">Nenhum serviço ou produto adicionado ainda.</p>
                         </div>
@@ -270,7 +254,6 @@
                 </form>
             </div>
 
-            <!-- 2. TELA: ACOMPANHAMENTO DE PÁTIO (KANBAN) -->
             <div id="screen-acompanhamento" class="view-screen hidden space-y-4 h-full flex flex-col">
                 <div class="flex justify-between items-center shrink-0">
                     <h2 class="text-md font-bold text-slate-300 uppercase tracking-wide">Pátio KANBAN - Status da Operação do Dia</h2>
@@ -281,7 +264,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 overflow-x-auto pb-4">
                     <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
@@ -290,7 +272,6 @@
                         </div>
                         <div id="col-fila" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
-
                     <div class="bg-slate-900/60 border border-amber-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
                             <span class="text-xs font-black text-amber-400 uppercase tracking-wider">2. Em Execução</span>
@@ -298,7 +279,6 @@
                         </div>
                         <div id="col-lavagem" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
-
                     <div class="bg-slate-900/60 border border-cyan-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
                             <span class="text-xs font-black text-cyan-400 uppercase tracking-wider">3. Pronto / Aguardando</span>
@@ -306,7 +286,6 @@
                         </div>
                         <div id="col-pronto" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
-
                     <div class="bg-slate-900/60 border border-emerald-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
                             <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">4. Entregue (Hoje)</span>
@@ -317,7 +296,6 @@
                 </div>
             </div>
 
-            <!-- 3. TELA: MÓDULO DE CAIXA -->
             <div id="screen-caixa" class="view-screen hidden space-y-6">
                 <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
@@ -326,7 +304,6 @@
                                 <h2 class="text-lg font-black text-slate-100 uppercase tracking-wide">Gestão de Caixa Diário</h2>
                                 <span id="cx-status-pill" class="text-xs font-black px-3 py-1 rounded-full uppercase bg-rose-950 text-rose-400 border border-rose-800">FECHADO</span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1" id="cx-info-sessao">Nenhum caixa aberto no momento.</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button id="btn-abrir-caixa" onclick="abrirModalAbrirCaixa()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all">
@@ -340,32 +317,8 @@
                             </button>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Fundo Inicial</span>
-                            <span id="cx-card-fundo" class="text-base font-black text-slate-200">R$ 0,00</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-emerald-400 uppercase block">Dinheiro</span>
-                            <span id="cx-card-dinheiro" class="text-base font-black text-emerald-400">R$ 0,00</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-cyan-400 uppercase block">Pix / Cartão</span>
-                            <span id="cx-card-digital" class="text-base font-black text-cyan-400">R$ 0,00</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] font-bold text-amber-400 uppercase block">Sangrias</span>
-                            <span id="cx-card-sangrias" class="text-base font-black text-amber-400">R$ 0,00</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-cyan-500/40 col-span-2 md:col-span-1">
-                            <span class="text-[10px] font-bold text-cyan-400 uppercase block">Saldo Gaveta</span>
-                            <span id="cx-card-saldo-gaveta" class="text-base font-black text-cyan-300">R$ 0,00</span>
-                        </div>
-                    </div>
                 </div>
-
-                <div class="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-2xl space-y-2 p-4">
+                <div class="bg-slate-900/85 border border-slate-800 rounded-xl overflow-hidden p-4">
                     <h3 class="text-xs font-black text-cyan-400 uppercase tracking-wider mb-2">Comandas Pendentes de Pagamento</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
@@ -373,9 +326,7 @@
                                 <tr>
                                     <th class="p-3.5">Placa / Veículo</th>
                                     <th class="p-3.5">Cliente</th>
-                                    <th class="p-3.5">Equipe</th>
                                     <th class="p-3.5">Valor Total</th>
-                                    <th class="p-3.5">Status</th>
                                     <th class="p-3.5 text-right">Ação</th>
                                 </tr>
                             </thead>
@@ -385,41 +336,10 @@
                 </div>
             </div>
 
-            <!-- 4. TELA: HISTÓRICO DE PASSAGENS -->
             <div id="screen-historico-passagens" class="view-screen hidden space-y-6">
                 <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
                     <h2 class="text-base font-black text-cyan-400 uppercase tracking-wide">Relatório de Passagens & Atendimentos</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Inicial</label>
-                            <input type="date" id="hist-data-inicio" onchange="carregarHistoricoPassagens()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Final</label>
-                            <input type="date" id="hist-data-fim" onchange="carregarHistoricoPassagens()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Buscar</label>
-                            <input type="text" id="hist-busca" oninput="carregarHistoricoPassagens()" placeholder="Placa, cliente ou modelo..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-100">
-                        </div>
-                    </div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Total Veículos</span>
-                        <div class="text-2xl font-black text-cyan-400 mt-1" id="hist-card-total-veiculos">0</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Faturamento</span>
-                        <div class="text-2xl font-black text-emerald-400 mt-1" id="hist-card-faturamento">R$ 0,00</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Ticket Médio</span>
-                        <div class="text-2xl font-black text-amber-400 mt-1" id="hist-card-ticket-medio">R$ 0,00</div>
-                    </div>
-                </div>
-
                 <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden p-4">
                     <table class="w-full text-left text-xs text-slate-300">
                         <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
@@ -427,9 +347,6 @@
                                 <th class="p-3">Data / Hora</th>
                                 <th class="p-3">Placa</th>
                                 <th class="p-3">Cliente</th>
-                                <th class="p-3">Serviços / Produtos</th>
-                                <th class="p-3">Equipe</th>
-                                <th class="p-3">Forma Pag.</th>
                                 <th class="p-3 text-right">Total</th>
                             </tr>
                         </thead>
@@ -438,80 +355,15 @@
                 </div>
             </div>
 
-            <!-- 5. TELA: RELATÓRIOS & CARTEIRA -->
             <div id="screen-relatorios" class="view-screen hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
                         <span class="text-xs text-slate-400 font-bold uppercase block">Faturamento Pago</span>
                         <div class="text-2xl font-black text-emerald-400 mt-1" id="rep-faturamento">R$ 0,00</div>
                     </div>
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Carteira (Fiado)</span>
-                        <div class="text-2xl font-black text-amber-400 mt-1" id="rep-carteira-total">R$ 0,00</div>
-                    </div>
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Atendimentos</span>
-                        <div class="text-2xl font-black text-cyan-400 mt-1" id="rep-atendimentos">0</div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900/90 border border-purple-500/30 rounded-2xl p-5 space-y-4">
-                    <h3 class="font-black text-purple-400 text-sm uppercase">Extrato de Comissões por Funcionário</h3>
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
-                            <tr>
-                                <th class="p-3">Funcionário</th>
-                                <th class="p-3">Cargo</th>
-                                <th class="p-3">Serviços</th>
-                                <th class="p-3">Produzido</th>
-                                <th class="p-3">%</th>
-                                <th class="p-3">Comissão</th>
-                                <th class="p-3 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-comissoes-body"></tbody>
-                    </table>
-                </div>
-
-                <div class="bg-slate-900/90 border border-cyan-500/30 rounded-2xl p-5 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-black text-cyan-400 text-sm uppercase">Folha de Pagamento & Adiantamentos</h3>
-                        <button onclick="abrirModalAdiantamento()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs">Lançar Vale</button>
-                    </div>
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
-                            <tr>
-                                <th class="p-3">Funcionário</th>
-                                <th class="p-3">Cargo</th>
-                                <th class="p-3">Salário Base</th>
-                                <th class="p-3">Vales</th>
-                                <th class="p-3">Líquido</th>
-                                <th class="p-3 text-right">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-folha-body"></tbody>
-                    </table>
-                    <div id="lista-vales-abertos" class="space-y-1.5 pt-2"></div>
-                </div>
-
-                <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-5 space-y-4">
-                    <h3 class="font-black text-amber-400 text-sm uppercase">Carteira de Clientes (Fiado)</h3>
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
-                            <tr>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Placa</th>
-                                <th class="p-3">Valor</th>
-                                <th class="p-3">Vencimento</th>
-                                <th class="p-3 text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-carteira-body"></tbody>
-                    </table>
                 </div>
             </div>
 
-            <!-- 6. MÓDULO: CADASTRO DE USUÁRIOS -->
             <div id="screen-usuarios" class="view-screen hidden space-y-6">
                 <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -526,7 +378,7 @@
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-400 uppercase mb-0.5">E-mail *</label>
-                            <input type="email" id="usr-email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                            <input type="email" id="usr-email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white" placeholder="usuario@email.com">
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Perfil *</label>
@@ -556,7 +408,6 @@
                 </div>
             </div>
 
-            <!-- 7. MÓDULO: PRODUTOS E SERVIÇOS -->
             <div id="screen-produtos-servicos" class="view-screen hidden space-y-6">
                 <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-4">
                     <h3 class="font-bold text-cyan-400 text-sm uppercase">Cadastrar Item no Catálogo</h3>
@@ -596,98 +447,6 @@
         </section>
     </main>
 
-    <!-- MODAIS DO SISTEMA -->
-    <div id="modal-abrir-caixa" class="fixed inset-0 bg-black/85 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-[#0b1120] border-2 border-emerald-500/50 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 class="font-black text-emerald-400 uppercase">Abertura de Caixa</h3>
-            <form onsubmit="confirmarAberturaCaixa(event)" class="space-y-4">
-                <input type="number" step="0.01" id="abertura-valor-fundo" required placeholder="0,00" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-emerald-400">
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="fecharModalAbrirCaixa()" class="px-4 py-2 border border-slate-700 rounded-xl text-xs">Cancelar</button>
-                    <button type="submit" class="px-6 py-2 bg-emerald-600 text-slate-950 font-black rounded-xl text-xs">Confirmar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-sangria-caixa" class="fixed inset-0 bg-black/85 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-[#0b1120] border-2 border-amber-500/50 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 class="font-black text-amber-400 uppercase">Sangria de Caixa</h3>
-            <form onsubmit="confirmarSangriaCaixa(event)" class="space-y-4">
-                <input type="number" step="0.01" id="sangria-valor" required placeholder="0,00" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-amber-400">
-                <input type="text" id="sangria-motivo" required placeholder="Motivo" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white">
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="fecharModalSangria()" class="px-4 py-2 border border-slate-700 rounded-xl text-xs">Cancelar</button>
-                    <button type="submit" class="px-6 py-2 bg-amber-600 text-slate-950 font-black rounded-xl text-xs">Efetuar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-fechar-caixa" class="fixed inset-0 bg-black/85 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-[#0b1120] border-2 border-rose-500/50 rounded-2xl max-w-lg w-full p-6 space-y-4">
-            <h3 class="font-black text-rose-400 uppercase">Fechamento de Caixa</h3>
-            <div class="bg-slate-950 p-4 rounded-xl text-xs space-y-2">
-                <div class="flex justify-between"><span>Fundo:</span><strong id="fech-fundo-display">R$ 0,00</strong></div>
-                <div class="flex justify-between"><span>Dinheiro:</span><strong id="fech-dinheiro-display">R$ 0,00</strong></div>
-                <div class="flex justify-between"><span>Sangria:</span><strong id="fech-sangria-display">R$ 0,00</strong></div>
-                <div class="flex justify-between font-bold text-cyan-300"><span>Esperado:</span><strong id="fech-esperado-display">R$ 0,00</strong></div>
-            </div>
-            <form onsubmit="confirmarFechamentoCaixa(event)" class="space-y-4">
-                <input type="number" step="0.01" id="fech-valor-contado" oninput="calcularDiferencaFechamento()" required placeholder="Valor contado" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-cyan-300">
-                <div class="flex justify-between text-xs font-bold text-slate-300"><span>Diferença:</span><span id="fech-diferenca-val">R$ 0,00</span></div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="fecharModalFecharCaixa()" class="px-4 py-2 border border-slate-700 rounded-xl text-xs">Cancelar</button>
-                    <button type="submit" class="px-6 py-2 bg-rose-600 text-white font-black rounded-xl text-xs">Fechar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-pagamento-caixa" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-[#0b1120] border-2 border-cyan-500/50 rounded-2xl max-w-lg w-full p-6 space-y-5">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-black text-cyan-400 uppercase">Recebimento de Comanda</h3>
-                <button onclick="fecharModalPagamento()" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="bg-slate-950 p-4 rounded-xl flex justify-between items-center">
-                <div><span id="cx-modal-placa" class="text-lg font-black text-cyan-300">ABC1D23</span><p id="cx-modal-cliente" class="text-xs text-slate-400">-</p></div>
-                <div class="text-right"><span class="text-[10px] text-slate-400 uppercase block font-bold">Total</span><span id="cx-modal-total" class="text-2xl font-black text-emerald-400">R$ 0,00</span></div>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                <button type="button" data-metodo="dinheiro" onclick="selecionarFormaPagamento('dinheiro')" class="btn-metodo-pag p-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-xs">Dinheiro</button>
-                <button type="button" data-metodo="pix" onclick="selecionarFormaPagamento('pix')" class="btn-metodo-pag p-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-xs">Pix</button>
-                <button type="button" data-metodo="debito" onclick="selecionarFormaPagamento('debito')" class="btn-metodo-pag p-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-xs">Débito</button>
-                <button type="button" data-metodo="credito" onclick="selecionarFormaPagamento('credito')" class="btn-metodo-pag p-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-xs">Crédito</button>
-                <button type="button" data-metodo="carteira" onclick="selecionarFormaPagamento('carteira')" class="btn-metodo-pag col-span-2 sm:col-span-1 p-3 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 font-bold text-xs">Carteira</button>
-            </div>
-            <div id="box-opcoes-carteira" class="hidden bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl space-y-2">
-                <label class="block text-[10px] text-slate-300 font-bold">Prazo em Dias:</label>
-                <select id="cx-dias-carteira" class="w-full bg-slate-950 text-amber-300 border border-amber-800 rounded-lg p-2 text-xs"><option value="15">15 Dias</option><option value="30">30 Dias</option></select>
-            </div>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="fecharModalPagamento()" class="px-4 py-2 border border-slate-700 rounded-xl text-xs">Cancelar</button>
-                <button onclick="confirmarBaixaCaixa()" class="px-6 py-2 bg-emerald-600 text-slate-950 font-black rounded-xl text-xs">Efetuar Baixa</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-adiantamento" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-md w-full p-5 space-y-4">
-            <h3 class="font-bold text-amber-400 text-sm uppercase">Lançar Adiantamento (Vale)</h3>
-            <form onsubmit="salvarAdiantamento(event)" class="space-y-3">
-                <select id="adv-usuario" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200"></select>
-                <input type="number" step="0.01" id="adv-valor" required placeholder="Valor" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-emerald-400">
-                <input type="text" id="adv-obs" placeholder="Observação" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200">
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="fecharModalAdiantamento()" class="px-3 py-1.5 border border-slate-700 rounded-lg text-xs">Cancelar</button>
-                    <button type="submit" class="px-3 py-1.5 bg-amber-600 text-slate-950 font-bold rounded-lg text-xs">Confirmar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: SELECIONAR ITEM DO CATÁLOGO (NOVA ENTRADA) -->
     <div id="modal-selecionar-item-entrada" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-md w-full p-5 space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -701,7 +460,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADICIONAR ITEM NO KANBAN DURANTE A JORNADA -->
     <div id="modal-kanban-adicionar-item" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-md w-full p-5 space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -720,7 +478,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE AUTENTICAÇÃO -->
     <div id="modal-autenticacao" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50">
         <div class="bg-[#0b1120] border-2 border-cyan-500/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-[0_0_30px_rgba(0,240,255,0.2)] relative">
             <div id="auth-etapa-login">
@@ -731,20 +488,16 @@
                     <h2 class="text-xl font-black text-cyan-400 tracking-wider uppercase">Acesso ao Sistema</h2>
                     <p class="text-xs text-slate-400">Informe suas credenciais para entrar no KASIVAE CAR</p>
                 </div>
-
                 <div id="auth-mensagem-login" class="hidden p-3 rounded-lg text-xs font-semibold mb-4 bg-rose-950/80 border border-rose-800 text-rose-300"></div>
-
                 <form onsubmit="handleLoginSystem(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 uppercase mb-1">E-mail de Acesso *</label>
                         <input type="email" id="auth-email" placeholder="admin@kasivaecar.com" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha *</label>
                         <input type="password" id="auth-senha" placeholder="••••••••" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
                     </div>
-
                     <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-xl shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all uppercase tracking-wider text-sm cursor-pointer">
                         Entrar no Sistema
                     </button>
