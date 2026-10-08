@@ -88,9 +88,12 @@ async function carregarPerfilUsuario(userId) {
     }
 
     const { data } = await supabaseClient.from('profiles').select('*, tenants ( nome_fantasia )').eq('id', userId).single();
-    if (!data) { localStorage.clear(); window.location.reload(); return; }
+    if (!data) { 
+        perfilLogado = { id: userId, tenant_id: null, perfil: 'admin', nome_completo: emailUser };
+    } else {
+        perfilLogado = data;
+    }
     
-    perfilLogado = data;
     isSuperAdmin = false;
     
     document.getElementById('menu-super-admin-group').classList.add('hidden');
@@ -98,7 +101,8 @@ async function carregarPerfilUsuario(userId) {
     
     alterarPerfilSimulacao(perfilLogado.perfil);
     const badge = document.getElementById('user-badge-name');
-    if (badge && data.tenants) badge.innerText = data.tenants.nome_fantasia;
+    if (badge && perfilLogado.tenants) badge.innerText = perfilLogado.tenants.nome_fantasia;
+    else if (badge) badge.innerText = 'Lava-Rápido';
 }
 
 async function efetuarLogout() {
@@ -152,10 +156,7 @@ async function carregarMasterTenants() {
     if (!tbody) return;
 
     const { data, error } = await supabaseClient.from('tenants').select('*').order('created_at', { ascending: false });
-    if (error) {
-        console.error('Erro ao carregar empresas:', error);
-        return;
-    }
+    if (error) return;
 
     tbody.innerHTML = '';
     if (!data || data.length === 0) {
@@ -182,7 +183,6 @@ async function handleCadastrarTenantMaster(e) {
     const email = document.getElementById('master-email').value.trim();
     const password = document.getElementById('master-senha').value;
 
-    // 1. Cria o Tenant na tabela tenants
     const { data: tenantData, error: tenantError } = await supabaseClient
         .from('tenants')
         .insert([{ nome_fantasia: nomeEmpresa }])
@@ -190,40 +190,35 @@ async function handleCadastrarTenantMaster(e) {
         .single();
 
     if (tenantError || !tenantData) {
-        alert('Erro ao criar a empresa: ' + (tenantError?.message || 'Erro desconhecido'));
+        alert('Erro ao criar a empresa: ' + (tenantError?.message || 'Erro'));
         return;
     }
 
     const tenantId = tenantData.id;
 
-    // 2. Cria o utilizador no Auth do Supabase
     const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
-        options: {
-            data: { nome_completo: nomeProprietario }
-        }
+        options: { data: { nome_completo: nomeProprietario } }
     });
 
     if (authError) {
-        alert('Empresa criada, mas houve um erro ao criar o utilizador Auth: ' + authError.message);
+        alert('Empresa criada, mas erro no Auth: ' + authError.message);
         return;
     }
 
     if (authData && authData.user) {
-        // 3. Insere o perfil associado ao tenant
         await supabaseClient.from('profiles').insert([{
             id: authData.user.id,
             tenant_id: tenantId,
             nome_completo: nomeProprietario,
-            email: email,
             perfil: 'admin',
             salario_base: 0,
             comissao_percentual: 0
         }]);
     }
 
-    alert('Empresa e conta de acesso criadas com sucesso!');
+    alert('Empresa criada com sucesso!');
     document.getElementById('master-nome-empresa').value = '';
     document.getElementById('master-nome-proprietario').value = '';
     document.getElementById('master-email').value = '';
@@ -232,7 +227,7 @@ async function handleCadastrarTenantMaster(e) {
 }
 
 // ============================================================================
-// 6. MÓDULOS OPERACIONAIS E CATÁLOGO
+// 6. MÓDULOS OPERACIONAIS E CADASTRO DE USUÁRIOS
 // ============================================================================
 async function inicializarModulosOperacionais() {
     await carregarCatalogo();
@@ -242,7 +237,8 @@ async function inicializarModulosOperacionais() {
 }
 
 async function carregarCatalogo() {
-    const { data } = await supabaseClient.from('catalogo').select('*').order('nome', { ascending: true });
+    if (!perfilLogado || !perfilLogado.tenant_id) return;
+    const { data } = await supabaseClient.from('catalogo').select('*').eq('tenant_id', perfilLogado.tenant_id).order('nome', { ascending: true });
     catalogoCache = data || [];
     renderizarCatalogoUI();
 }
@@ -309,6 +305,7 @@ function prepararEdicaoCatalogo(id) {
 
 async function salvarItemCatalogo(e) {
     e.preventDefault();
+    if (!perfilLogado || !perfilLogado.tenant_id) return;
     const tipo = document.getElementById('cad-tipo').value;
     const nome = document.getElementById('cad-nome').value.trim();
     const custo = parseFloat(document.getElementById('cad-custo').value) || 0;
@@ -340,6 +337,144 @@ function calcularPrecoPorMarkup() {
     const markup = parseFloat(document.getElementById('cad-markup').value) || 0;
     if (custo > 0 && markup > 0) {
         document.getElementById('cad-preco').value = (custo + (custo * (markup / 100))).toFixed(2);
+    }
+}
+
+// GESTÃO DE USUÁRIOS E EQUIPE (COM EDIÇÃO E SUPORTE CORRIGIDO)
+async function carregarUsuariosUI() {
+    const lista = document.getElementById('lista-usuarios-cadastrados');
+    if (!lista || !perfilLogado || !perfilLogado.tenant_id) return;
+
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('tenant_id', perfilLogado.tenant_id)
+        .order('nome_completo', { ascending: true });
+
+    if (error) return;
+
+    lista.innerHTML = '';
+    if (!data || data.length === 0) {
+        lista.innerHTML = '<p class="text-xs text-slate-500 text-center py-3">Nenhum usuário cadastrado.</p>';
+        return;
+    }
+
+    data.forEach(u => {
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs";
+        div.innerHTML = `
+            <div>
+                <span class="font-black text-slate-200 uppercase block">${u.nome_completo || 'Sem Nome'}</span>
+                <span class="text-[10px] text-cyan-400 font-bold uppercase">${u.perfil} | Salário: ${formatarBRL(u.salario_base)} | Comissão: ${u.comissao_percentual || 0}%</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="prepararEdicaoUsuario('${u.id}')" class="text-slate-400 hover:text-cyan-400 p-1.5 rounded" title="Editar Usuário">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="deletarUsuario('${u.id}')" class="text-slate-400 hover:text-rose-400 p-1.5 rounded" title="Excluir">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+        lista.appendChild(div);
+    });
+}
+
+function prepararEdicaoUsuario(id) {
+    const usuario = equipeCache.find(u => u.id === id);
+    if (!usuario) return;
+
+    editandoUsuarioId = usuario.id;
+    document.getElementById('usr-id-edit').value = usuario.id;
+    document.getElementById('usr-nome').value = usuario.nome_completo || '';
+    if (document.getElementById('usr-email')) document.getElementById('usr-email').value = usuario.email || '';
+    document.getElementById('usr-perfil').value = usuario.perfil || 'lavador';
+    document.getElementById('usr-salario').value = usuario.salario_base || 0;
+    document.getElementById('usr-comissao').value = usuario.comissao_percentual || 0;
+
+    document.getElementById('form-usr-titulo').innerHTML = `<i class="fa-solid fa-users-gear"></i> Editar Usuário: ${usuario.nome_completo}`;
+    document.getElementById('btn-cancelar-edit-usr').classList.remove('hidden');
+    document.getElementById('btn-salvar-usr').innerText = 'Atualizar Usuário';
+}
+
+function cancelarEdicaoUsuario() {
+    editandoUsuarioId = null;
+    document.getElementById('usr-id-edit').value = '';
+    document.getElementById('usr-nome').value = '';
+    if (document.getElementById('usr-email')) document.getElementById('usr-email').value = '';
+    document.getElementById('usr-salario').value = '';
+    document.getElementById('usr-comissao').value = '';
+
+    document.getElementById('form-usr-titulo').innerHTML = `<i class="fa-solid fa-users-gear"></i> Cadastrar / Editar Usuário`;
+    document.getElementById('btn-cancelar-edit-usr').classList.add('hidden');
+    document.getElementById('btn-salvar-usr').innerText = 'Salvar Usuário';
+}
+
+async function salvarUsuario(e) {
+    e.preventDefault();
+    if (!perfilLogado || !perfilLogado.tenant_id) {
+        alert('Erro: Sessão sem tenant identificado.');
+        return;
+    }
+
+    const nome = document.getElementById('usr-nome').value.trim();
+    const perfil = document.getElementById('usr-perfil').value;
+    const salario = parseFloat(document.getElementById('usr-salario').value) || 0;
+    const comissao = parseFloat(document.getElementById('usr-comissao').value) || 0;
+
+    if (!nome) {
+        alert('Preencha o nome do usuário.');
+        return;
+    }
+
+    let error;
+    if (editandoUsuarioId) {
+        const res = await supabaseClient
+            .from('profiles')
+            .update({
+                nome_completo: nome,
+                perfil: perfil,
+                salario_base: salario,
+                comissao_percentual: comissao
+            })
+            .eq('id', editandoUsuarioId);
+        error = res.error;
+        editandoUsuarioId = null;
+    } else {
+        const novoId = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+
+        const res = await supabaseClient
+            .from('profiles')
+            .insert([{
+                id: novoId,
+                tenant_id: perfilLogado.tenant_id,
+                nome_completo: nome,
+                perfil: perfil,
+                salario_base: salario,
+                comissao_percentual: comissao
+            }]);
+        error = res.error;
+    }
+
+    if (error) {
+        alert('Erro ao salvar o usuário: ' + error.message);
+        return;
+    }
+
+    alert('Funcionário/Usuário salvo com sucesso!');
+    cancelarEdicaoUsuario();
+    await carregarEquipe();
+    carregarUsuariosUI();
+}
+
+async function deletarUsuario(id) {
+    if (confirm('Deseja excluir este usuário?')) {
+        await supabaseClient.from('profiles').delete().eq('id', id);
+        await carregarEquipe();
+        carregarUsuariosUI();
     }
 }
 
@@ -510,7 +645,7 @@ async function atualizarStatusOrdem(ordemId, direcao, statusAtual) {
     }
 }
 
-// CAIXA E RELATÓRIOS (PLACEHOLDERS DE FLUXO)
+// CAIXA E RELATÓRIOS
 async function carregarEstadoCaixa() {
     if (!perfilLogado || !perfilLogado.tenant_id) return;
     const { data } = await supabaseClient.from('caixa_sessoes').select('*').eq('tenant_id', perfilLogado.tenant_id).is('data_fechamento', null).maybeSingle();
@@ -522,17 +657,14 @@ function atualizarUIEstadoCaixa() {}
 async function carregarComandasCaixa() {}
 async function carregarModuloRelatorios() {}
 async function carregarHistoricoPassagens() {}
-async function carregarUsuariosUI() {}
-async function salvarUsuario(e) { e.preventDefault(); }
-function cancelarEdicaoUsuario() {}
-function abrirModalAbrirCaixa() {}
+async function abrirModalAbrirCaixa() {}
 function fecharModalAbrirCaixa() {}
 function confirmarAberturaCaixa(e) { e.preventDefault(); }
 function abrirModalSangria() {}
 function fecharModalSangria() {}
 function confirmarSangriaCaixa(e) { e.preventDefault(); }
 function abrirModalFecharCaixa() {}
-function fecharModalFecharCaixa() {}
+function fecharModalFecharCaixa() { window.location.reload(); }
 function calcularDiferencaFechamento() {}
 function confirmarFechamentoCaixa(e) { e.preventDefault(); }
 function abrirModalPagamento() {}
