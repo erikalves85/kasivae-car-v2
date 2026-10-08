@@ -341,7 +341,7 @@ function calcularPrecoPorMarkup() {
     }
 }
 
-// GESTÃO DE USUÁRIOS E EQUIPE (COM SUPORTE A EMAIL E EDIÇÃO)
+// GESTÃO DE USUÁRIOS E EQUIPE
 async function carregarUsuariosUI() {
     const lista = document.getElementById('lista-usuarios-cadastrados');
     if (!lista || !perfilLogado || !perfilLogado.tenant_id) return;
@@ -419,7 +419,8 @@ async function salvarUsuario(e) {
     }
 
     const nome = document.getElementById('usr-nome').value.trim();
-    const email = document.getElementById('usr-email').value.trim();
+    const emailInput = document.getElementById('usr-email');
+    const email = emailInput ? emailInput.value.trim() : '';
     const perfil = document.getElementById('usr-perfil').value;
     const salario = parseFloat(document.getElementById('usr-salario').value) || 0;
     const comissao = parseFloat(document.getElementById('usr-comissao').value) || 0;
