@@ -370,15 +370,11 @@
                         <h3 id="form-usr-titulo" class="font-bold text-cyan-400 text-sm uppercase">Cadastrar / Editar Usuário</h3>
                         <button type="button" id="btn-cancelar-edit-usr" onclick="cancelarEdicaoUsuario()" class="hidden text-xs bg-slate-800 text-rose-400 px-2.5 py-1 rounded">Cancelar</button>
                     </div>
-                    <form onsubmit="salvarUsuario(event)" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <form onsubmit="salvarUsuario(event)" class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <input type="hidden" id="usr-id-edit">
-                        <div>
+                        <div class="md:col-span-2">
                             <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Nome *</label>
-                            <input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase mb-0.5">E-mail *</label>
-                            <input type="email" id="usr-email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white" placeholder="usuario@email.com">
+                            <input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white" placeholder="Nome Completo">
                         </div>
                         <div>
                             <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Perfil *</label>
@@ -400,7 +396,7 @@
                             <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Comissão (%)</label>
                             <input type="number" step="0.1" id="usr-comissao" placeholder="0%" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
                         </div>
-                        <div class="md:col-span-5 flex justify-end">
+                        <div class="md:col-span-4 flex justify-end">
                             <button type="submit" id="btn-salvar-usr" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2 rounded-lg text-sm">Salvar Usuário</button>
                         </div>
                     </form>
