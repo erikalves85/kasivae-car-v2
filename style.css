@@ -1,0 +1,22 @@
+/* style.css */
+.neon-glow {
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+.glass-panel {
+    background: rgba(11, 17, 32, 0.9);
+    backdrop-filter: blur(12px);
+}
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #060911;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #00f0ff;
+}
