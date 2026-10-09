@@ -26,10 +26,6 @@ let equipeCache = [];
 let itensNovaEntradaSelecionados = [];
 
 let caixaAtual = null;
-let comandaPagandoId = null;
-let comandaPagandoValor = 0;
-let metodoPagamentoSelecionado = 'dinheiro';
-
 let editandoCatalogoId = null;
 let editandoUsuarioId = null;
 
@@ -250,13 +246,14 @@ async function carregarEquipe() {
     popularSelectsEquipe();
 }
 
-// FILTRO INTELIGENTE DE EQUIPE POR CARGO NOS SELECTS DA NOVA ENTRADA
+// ADMIN ATUA COMO CORINGA EM TODOS OS ESTÁGIOS DA EQUIPE
 function popularSelectsEquipe() {
     const preencherSelectFiltro = (elementId, perfilDesejado) => {
         const sel = document.getElementById(elementId);
         if (!sel) return;
         sel.innerHTML = '<option value="">Selecione...</option>';
-        equipeCache.filter(u => u.perfil === perfilDesejado).forEach(u => {
+        // Filtra quem tem o perfil correto OU é admin (coringa)
+        equipeCache.filter(u => u.perfil === perfilDesejado || u.perfil === 'admin').forEach(u => {
             const opt = document.createElement('option');
             opt.value = u.id;
             opt.textContent = `${u.nome_completo} (${u.perfil})`;
