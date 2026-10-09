@@ -28,9 +28,9 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-[#060911] text-slate-100 font-sans antialiased h-screen flex overflow-hidden">
 
@@ -88,7 +88,7 @@
 
                 <div class="text-[10px] font-black text-slate-500 uppercase px-2 pt-3 pb-1 tracking-wider">Módulos de Cadastro</div>
                 <button onclick="navegarPara('usuarios')" data-roles="admin,gerente" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg hover:bg-slate-800/60 text-slate-300 transition-all">
-                    <i class="fa-solid fa-users-gear text-indigo-400 w-5"></i> Cadastro de Usuários
+                    <i class="fa-solid fa-users-gear text-indigo-400 w-5"></i> Cadastro de Equipe
                 </button>
                 <button onclick="navegarPara('produtos-servicos')" data-roles="admin,gerente" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold rounded-lg hover:bg-slate-800/60 text-slate-300 transition-all">
                     <i class="fa-solid fa-box-open text-cyan-400 w-5"></i> Produtos & Serviços
@@ -112,7 +112,7 @@
     <main class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         
         <header class="bg-[#0a0f1d] border-b border-slate-800 px-6 py-3.5 flex justify-between items-center shrink-0">
-            <h1 id="screen-title" class="text-lg font-black tracking-wide text-cyan-400 uppercase">NOVA ENTRADA</h1>
+            <h1 id="screen-title" class="text-lg font-black tracking-wide text-cyan-400 uppercase">KASIVAE CAR</h1>
             <div class="flex items-center gap-4 text-xs text-slate-300">
                 <div id="badge-status-caixa-header" class="flex items-center gap-2 bg-rose-950/80 border border-rose-800/80 text-rose-300 px-3 py-1 rounded-full text-xs font-bold">
                     <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
@@ -129,168 +129,80 @@
 
             <div id="screen-super-admin" class="view-screen hidden space-y-6 max-w-4xl mx-auto">
                 <div class="bg-slate-900/90 border border-rose-500/40 p-6 rounded-2xl space-y-5 shadow-xl">
-                    <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-base font-black text-rose-400 uppercase tracking-wide flex items-center gap-2">
-                                <i class="fa-solid fa-building-user"></i> Painel Master - Gestão de Lojas & Franquias
-                            </h2>
-                            <p class="text-xs text-slate-400">Registo de novos estabelecimentos e contas de acesso proprietárias</p>
-                        </div>
+                    <div class="border-b border-slate-800 pb-3">
+                        <h2 class="text-base font-black text-rose-400 uppercase tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-building-user"></i> Painel Master - Gestão de Lojas & Franquias
+                        </h2>
                     </div>
                     <form onsubmit="handleCadastrarTenantMaster(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome do Lava-Rápido *</label>
-                            <input type="text" id="master-nome-empresa" required placeholder="Ex: Kasivae Car Centro" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-400 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome do Proprietário *</label>
-                            <input type="text" id="master-nome-proprietario" required placeholder="Ex: Carlos Silva" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-400 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">E-mail de Acesso *</label>
-                            <input type="email" id="master-email" required placeholder="proprietario@email.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-400 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha Inicial *</label>
-                            <input type="password" id="master-senha" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-rose-400 focus:outline-none">
-                        </div>
-                        <div class="md:col-span-2 flex justify-end pt-2">
-                            <button type="submit" class="bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white font-black px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">
-                                <i class="fa-solid fa-circle-plus mr-1"></i> Criar Nova Empresa / Franquia
-                            </button>
-                        </div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Lava-Rápido *</label><input type="text" id="master-nome-empresa" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Proprietário *</label><input type="text" id="master-nome-proprietario" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">E-mail *</label><input type="email" id="master-email" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha Inicial *</label><input type="password" id="master-senha" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div class="md:col-span-2 flex justify-end pt-2"><button type="submit" class="bg-gradient-to-r from-rose-600 to-red-700 text-white font-black px-6 py-3 rounded-xl text-xs uppercase shadow-lg">Criar Empresa</button></div>
                     </form>
                 </div>
                 <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
-                    <h3 class="font-bold text-slate-200 text-xs uppercase tracking-wider">Empresas Cadastradas no Sistema</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-slate-300">
-                            <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
-                                <tr>
-                                    <th class="p-3">Nome Fantasia</th>
-                                    <th class="p-3">Data de Registo</th>
-                                    <th class="p-3 text-right">ID do Tenant</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tb-master-tenants"></tbody>
-                        </table>
-                    </div>
+                    <table class="w-full text-left text-xs text-slate-300"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase"><tr><th class="p-3">Nome Fantasia</th><th class="p-3">Data</th><th class="p-3 text-right">ID</th></tr></thead><tbody id="tb-master-tenants"></tbody></table>
                 </div>
             </div>
 
             <div id="screen-nova-entrada" class="view-screen hidden max-w-2xl mx-auto glass-panel p-6 rounded-2xl border border-cyan-500/30 neon-glow relative overflow-hidden">
                 <form id="form-nova-entrada" onsubmit="salvarNovaEntrada(event)" class="space-y-5 relative z-10">
                     <div>
-                        <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider mb-1.5">
-                            <i class="fa-solid fa-id-card mr-1"></i> Placa do Veículo *
-                        </label>
+                        <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider mb-1.5"><i class="fa-solid fa-id-card mr-1"></i> Placa do Veículo *</label>
                         <input type="text" id="ent-placa" placeholder="ABC1D23" required maxlength="8" class="w-full text-3xl font-black tracking-widest text-center bg-slate-950 text-cyan-300 border-2 border-slate-700/80 rounded-xl p-3 focus:border-cyan-400 focus:outline-none uppercase">
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Modelo / Cor *</label>
-                            <input type="text" id="ent-modelo" placeholder="Ex: Honda Civic Preto" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Cliente / WhatsApp *</label>
-                            <input type="text" id="ent-cliente" placeholder="Ex: (13) 99999-9999" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
-                        </div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Modelo / Cor *</label><input type="text" id="ent-modelo" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Cliente / WhatsApp *</label><input type="text" id="ent-cliente" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"></div>
                     </div>
-
                     <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3">
-                        <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-users-gear text-amber-400"></i> Atribuição da Equipe (3 Estágios)
-                        </label>
+                        <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider"><i class="fa-solid fa-users-gear text-amber-400"></i> Atribuição da Equipe</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">1. Lavador</label>
-                                <select id="ent-lavador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-amber-400 focus:outline-none"></select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-cyan-400 uppercase mb-1">2. Aspirador</label>
-                                <select id="ent-aspirador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-cyan-400 focus:outline-none"></select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-emerald-400 uppercase mb-1">3. Secador</label>
-                                <select id="ent-secador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-emerald-400 focus:outline-none"></select>
-                            </div>
+                            <div><label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">1. Lavador</label><select id="ent-lavador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-amber-400 focus:outline-none"></select></div>
+                            <div><label class="block text-[10px] font-bold text-cyan-400 uppercase mb-1">2. Aspirador</label><select id="ent-aspirador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-cyan-400 focus:outline-none"></select></div>
+                            <div><label class="block text-[10px] font-bold text-emerald-400 uppercase mb-1">3. Secador</label><select id="ent-secador" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:border-emerald-400 focus:outline-none"></select></div>
                         </div>
                     </div>
-
                     <div class="space-y-3 pt-2">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-2">
-                            <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider">
-                                <i class="fa-solid fa-list-check mr-1"></i> Itens Solicitados (Catálogo)
-                            </label>
+                            <label class="block text-xs font-black text-cyan-400 uppercase tracking-wider"><i class="fa-solid fa-list-check mr-1"></i> Itens Solicitados</label>
                             <div class="flex gap-2">
-                                <button type="button" onclick="abrirModalCatalogoEntrada('servico')" class="text-xs bg-cyan-950 text-cyan-300 border border-cyan-700/80 hover:bg-cyan-900 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
-                                    <i class="fa-solid fa-plus text-cyan-400"></i> Adicionar Serviço
-                                </button>
-                                <button type="button" onclick="abrirModalCatalogoEntrada('produto')" class="text-xs bg-purple-950 text-purple-300 border border-purple-700/80 hover:bg-purple-900 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all">
-                                    <i class="fa-solid fa-plus text-purple-400"></i> Adicionar Produto
-                                </button>
+                                <button type="button" onclick="abrirModalCatalogoEntrada('servico')" class="text-xs bg-cyan-950 text-cyan-300 border border-cyan-700/80 hover:bg-cyan-900 font-bold px-3 py-1.5 rounded-lg transition-all"><i class="fa-solid fa-plus"></i> Serviço</button>
+                                <button type="button" onclick="abrirModalCatalogoEntrada('produto')" class="text-xs bg-purple-950 text-purple-300 border border-purple-700/80 hover:bg-purple-900 font-bold px-3 py-1.5 rounded-lg transition-all"><i class="fa-solid fa-plus"></i> Produto</button>
                             </div>
                         </div>
-                        <div id="lista-itens-entrada-preview" class="bg-slate-950 border border-slate-800 rounded-xl p-3 min-h-[80px] space-y-2">
-                            <p class="text-xs text-slate-500 text-center py-3" id="msg-sem-itens">Nenhum serviço ou produto adicionado ainda.</p>
-                        </div>
+                        <div id="lista-itens-entrada-preview" class="bg-slate-950 border border-slate-800 rounded-xl p-3 min-h-[80px] space-y-2"></div>
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Observações / Avarias Prévias</label>
-                        <input type="text" id="ent-obs" placeholder="Ex: Risco para-choque dianteiro" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
-                    </div>
-
+                    <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Observações / Avarias</label><input type="text" id="ent-obs" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"></div>
                     <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Total Estimado</span>
-                            <span id="ent-total-display" class="text-3xl font-black text-cyan-400">R$ 0,00</span>
-                        </div>
-                        <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black px-6 py-3.5 rounded-xl flex items-center gap-2 transition-all cursor-pointer">
-                            <i class="fa-solid fa-car text-black"></i> DAR ENTRADA (NA FILA)
-                        </button>
+                        <div><span class="text-[10px] font-bold text-slate-400 uppercase block">Total Estimado</span><span id="ent-total-display" class="text-3xl font-black text-cyan-400">R$ 0,00</span></div>
+                        <button type="submit" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black px-6 py-3.5 rounded-xl flex items-center gap-2"><i class="fa-solid fa-car"></i> DAR ENTRADA</button>
                     </div>
                 </form>
             </div>
 
             <div id="screen-acompanhamento" class="view-screen hidden space-y-4 h-full flex flex-col">
                 <div class="flex justify-between items-center shrink-0">
-                    <h2 class="text-md font-bold text-slate-300 uppercase tracking-wide">Pátio KANBAN - Status da Operação do Dia</h2>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="busca-kanban" oninput="carregarKanban()" placeholder="Buscar por placa ou cliente..." class="bg-slate-950 border border-slate-700 rounded-lg text-xs p-1.5 text-slate-200 focus:border-cyan-400 focus:outline-none">
-                        <button onclick="carregarKanban()" class="text-xs bg-slate-900 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-lg hover:bg-slate-800">
-                            <i class="fa-solid fa-rotate mr-1"></i> Atualizar
-                        </button>
-                    </div>
+                    <h2 class="text-md font-bold text-slate-300 uppercase tracking-wide">Pátio KANBAN - Status da Operação</h2>
+                    <button onclick="carregarKanban()" class="text-xs bg-slate-900 border border-slate-700 text-cyan-400 px-3 py-1.5 rounded-lg hover:bg-slate-800"><i class="fa-solid fa-rotate mr-1"></i> Atualizar</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 overflow-x-auto pb-4">
                     <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-                            <span class="text-xs font-black text-slate-300 uppercase tracking-wider">1. Fila de Espera</span>
-                            <span id="badge-count-fila" class="text-xs bg-slate-800 font-bold px-2 py-0.5 rounded text-slate-300">0</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3"><span class="text-xs font-black text-slate-300 uppercase">1. Fila</span><span id="badge-count-fila" class="text-xs bg-slate-800 font-bold px-2 py-0.5 rounded text-slate-300">0</span></div>
                         <div id="col-fila" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
                     <div class="bg-slate-900/60 border border-amber-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-                            <span class="text-xs font-black text-amber-400 uppercase tracking-wider">2. Em Execução</span>
-                            <span id="badge-count-lavagem" class="text-xs bg-amber-950 border border-amber-800 font-bold px-2 py-0.5 rounded text-amber-300">0</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3"><span class="text-xs font-black text-amber-400 uppercase">2. Em Execução</span><span id="badge-count-lavagem" class="text-xs bg-amber-950 border border-amber-800 font-bold px-2 py-0.5 rounded text-amber-300">0</span></div>
                         <div id="col-lavagem" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
                     <div class="bg-slate-900/60 border border-cyan-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-                            <span class="text-xs font-black text-cyan-400 uppercase tracking-wider">3. Pronto / Aguardando</span>
-                            <span id="badge-count-pronto" class="text-xs bg-cyan-950 border border-cyan-800 font-bold px-2 py-0.5 rounded text-cyan-300">0</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3"><span class="text-xs font-black text-cyan-400 uppercase">3. Pronto</span><span id="badge-count-pronto" class="text-xs bg-cyan-950 border border-cyan-800 font-bold px-2 py-0.5 rounded text-cyan-300">0</span></div>
                         <div id="col-pronto" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
                     <div class="bg-slate-900/60 border border-emerald-500/20 rounded-2xl p-3 flex flex-col h-full min-w-[260px]">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-                            <span class="text-xs font-black text-emerald-400 uppercase tracking-wider">4. Entregue (Hoje)</span>
-                            <span id="badge-count-entregue" class="text-xs bg-emerald-950 border border-emerald-800 font-bold px-2 py-0.5 rounded text-emerald-300">0</span>
-                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3"><span class="text-xs font-black text-emerald-400 uppercase">4. Entregue</span><span id="badge-count-entregue" class="text-xs bg-emerald-950 border border-emerald-800 font-bold px-2 py-0.5 rounded text-emerald-300">0</span></div>
                         <div id="col-entregue" class="space-y-3 flex-1 overflow-y-auto pr-1"></div>
                     </div>
                 </div>
@@ -306,20 +218,14 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button id="btn-abrir-caixa" onclick="abrirModalAbrirCaixa()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all">
-                                <i class="fa-solid fa-lock-open"></i> ABRIR CAIXA
-                            </button>
-                            <button id="btn-sangria-caixa" onclick="abrirModalSangria()" class="hidden bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all">
-                                <i class="fa-solid fa-hand-holding-dollar"></i> SANGRIA
-                            </button>
-                            <button id="btn-fechar-caixa" onclick="abrirModalFecharCaixa()" class="hidden bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all">
-                                <i class="fa-solid fa-lock"></i> FECHAR CAIXA
-                            </button>
+                            <button id="btn-abrir-caixa" onclick="abrirModalAbrirCaixa()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg"><i class="fa-solid fa-lock-open"></i> ABRIR CAIXA</button>
+                            <button id="btn-sangria-caixa" onclick="abrirModalSangria()" class="hidden bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg"><i class="fa-solid fa-hand-holding-dollar"></i> SANGRIA</button>
+                            <button id="btn-fechar-caixa" onclick="abrirModalFecharCaixa()" class="hidden bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg"><i class="fa-solid fa-lock"></i> FECHAR CAIXA</button>
                         </div>
                     </div>
                 </div>
                 <div class="bg-slate-900/85 border border-slate-800 rounded-xl overflow-hidden p-4">
-                    <h3 class="text-xs font-black text-cyan-400 uppercase tracking-wider mb-2">Comandas Pendentes de Pagamento</h3>
+                    <h3 class="text-xs font-black text-cyan-400 uppercase tracking-wider mb-2">Comandas em Andamento / Concluídas</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm text-slate-300">
                             <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 text-xs uppercase">
@@ -327,7 +233,7 @@
                                     <th class="p-3.5">Placa / Veículo</th>
                                     <th class="p-3.5">Cliente</th>
                                     <th class="p-3.5">Valor Total</th>
-                                    <th class="p-3.5 text-right">Ação</th>
+                                    <th class="p-3.5 text-right">Ação / Status</th>
                                 </tr>
                             </thead>
                             <tbody id="tb-caixa-body"></tbody>
@@ -337,29 +243,72 @@
             </div>
 
             <div id="screen-historico-passagens" class="view-screen hidden space-y-6">
-                <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
-                    <h2 class="text-base font-black text-cyan-400 uppercase tracking-wide">Relatório de Passagens & Atendimentos</h2>
+                <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <h2 class="text-base font-black text-cyan-400 uppercase tracking-wide"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Passagens</h2>
+                    <input type="text" id="hist-busca-placa" oninput="carregarHistoricoPassagens()" placeholder="Buscar por placa..." class="bg-slate-950 border border-slate-700 rounded-lg text-xs p-2.5 text-slate-200 focus:border-cyan-400 focus:outline-none w-full md:w-64">
                 </div>
                 <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden p-4">
-                    <table class="w-full text-left text-xs text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
-                            <tr>
-                                <th class="p-3">Data / Hora</th>
-                                <th class="p-3">Placa</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-historico-body"></tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
+                                <tr>
+                                    <th class="p-3">Placa / Veículo</th>
+                                    <th class="p-3">Cliente</th>
+                                    <th class="p-3">Data / Hora</th>
+                                    <th class="p-3">Valor / Pagamento</th>
+                                    <th class="p-3">Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tb-historico-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <div id="screen-relatorios" class="view-screen hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold uppercase block">Faturamento Pago</span>
-                        <div class="text-2xl font-black text-emerald-400 mt-1" id="rep-faturamento">R$ 0,00</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                        <span class="text-xs text-slate-400 font-bold uppercase block mb-1"><i class="fa-solid fa-check-double text-emerald-400"></i> Faturamento Total Recebido</span>
+                        <div class="text-3xl font-black text-emerald-400" id="fin-total-recebido">R$ 0,00</div>
+                    </div>
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+                        <span class="text-xs text-slate-400 font-bold uppercase block mb-1"><i class="fa-solid fa-clock text-amber-400"></i> A Receber (Carteira / Fiado)</span>
+                        <div class="text-3xl font-black text-amber-400" id="fin-total-carteira">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden p-5 space-y-4">
+                        <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-file-invoice-dollar"></i> Pendentes em Carteira</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
+                                    <tr>
+                                        <th class="p-3">Cliente</th>
+                                        <th class="p-3">Placa</th>
+                                        <th class="p-3">Valor</th>
+                                        <th class="p-3">Vencimento</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tb-carteira-pendente"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden p-5 space-y-4">
+                        <h3 class="text-sm font-black text-cyan-400 uppercase tracking-wider"><i class="fa-solid fa-users"></i> Folha & Vales (Equipe)</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase">
+                                    <tr>
+                                        <th class="p-3">Funcionário</th>
+                                        <th class="p-3">Salário Base</th>
+                                        <th class="p-3 text-right">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tb-folha-pagamento"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -367,43 +316,16 @@
             <div id="screen-usuarios" class="view-screen hidden space-y-6">
                 <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 space-y-5">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <h3 id="form-usr-titulo" class="font-bold text-cyan-400 text-sm uppercase">Cadastrar / Editar Funcionário ou Usuário</h3>
+                        <h3 id="form-usr-titulo" class="font-bold text-cyan-400 text-sm uppercase">Cadastrar / Editar Funcionário</h3>
                         <button type="button" id="btn-cancelar-edit-usr" onclick="cancelarEdicaoUsuario()" class="hidden text-xs bg-slate-800 text-rose-400 px-3 py-1 rounded">Cancelar</button>
                     </div>
                     <form onsubmit="salvarUsuario(event)" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <input type="hidden" id="usr-id-edit">
-                        
-                        <div class="md:col-span-5">
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome Completo *</label>
-                            <input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none" placeholder="Ex: João Batista">
-                        </div>
-
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Perfil / Cargo *</label>
-                            <select id="usr-perfil" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
-                                <option value="lavador">Lavador</option>
-                                <option value="aspirador">Aspirador</option>
-                                <option value="secador">Secador</option>
-                                <option value="atendente">Atendente</option>
-                                <option value="caixa">Caixa</option>
-                                <option value="gerente">Gerente</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Salário Fixo</label>
-                            <input type="number" step="0.01" id="usr-salario" placeholder="0,00" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Comissão (%)</label>
-                            <input type="number" step="0.1" id="usr-comissao" placeholder="0%" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
-                        </div>
-
-                        <div class="md:col-span-12 flex justify-end pt-2">
-                            <button type="submit" id="btn-salvar-usr" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">Salvar Usuário</button>
-                        </div>
+                        <div class="md:col-span-5"><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome Completo *</label><input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div class="md:col-span-3"><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Cargo *</label><select id="usr-perfil" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-cyan-300"><option value="lavador">Lavador</option><option value="aspirador">Aspirador</option><option value="secador">Secador</option><option value="atendente">Atendente</option><option value="caixa">Caixa</option><option value="gerente">Gerente</option><option value="admin">Admin</option></select></div>
+                        <div class="md:col-span-2"><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Salário Fixo</label><input type="number" step="0.01" id="usr-salario" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div class="md:col-span-2"><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Comissão (%)</label><input type="number" step="0.1" id="usr-comissao" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white"></div>
+                        <div class="md:col-span-12 flex justify-end pt-2"><button type="submit" id="btn-salvar-usr" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-xl text-xs uppercase shadow-lg">Salvar Funcionário</button></div>
                     </form>
                     <div id="lista-usuarios-cadastrados" class="space-y-2 pt-3"></div>
                 </div>
@@ -414,32 +336,12 @@
                     <h3 class="font-bold text-cyan-400 text-sm uppercase">Cadastrar Item no Catálogo</h3>
                     <form onsubmit="salvarItemCatalogo(event)" class="grid grid-cols-1 md:grid-cols-6 gap-3">
                         <input type="hidden" id="cad-id-edit">
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase">Tipo</label>
-                            <select id="cad-tipo" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                                <option value="servico">Serviço</option>
-                                <option value="produto">Produto</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-[10px] text-slate-400 uppercase">Nome</label>
-                            <input type="text" id="cad-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase">Custo</label>
-                            <input type="number" step="0.01" id="cad-custo" oninput="calcularPrecoPorMarkup()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-amber-400 uppercase">Markup %</label>
-                            <input type="number" step="0.1" id="cad-markup" oninput="calcularPrecoPorMarkup()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-amber-300">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-emerald-400 uppercase">Preço Venda</label>
-                            <input type="number" step="0.1" id="cad-preco" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-emerald-400">
-                        </div>
-                        <div class="md:col-span-6 flex justify-end">
-                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-6 py-2 rounded-lg text-sm">Salvar Item</button>
-                        </div>
+                        <div><label class="block text-[10px] text-slate-400 uppercase">Tipo</label><select id="cad-tipo" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white"><option value="servico">Serviço</option><option value="produto">Produto</option></select></div>
+                        <div class="md:col-span-2"><label class="block text-[10px] text-slate-400 uppercase">Nome</label><input type="text" id="cad-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white"></div>
+                        <div><label class="block text-[10px] text-slate-400 uppercase">Custo</label><input type="number" step="0.01" id="cad-custo" oninput="calcularPrecoPorMarkup()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white"></div>
+                        <div><label class="block text-[10px] text-amber-400 uppercase">Markup %</label><input type="number" step="0.1" id="cad-markup" oninput="calcularPrecoPorMarkup()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-amber-300"></div>
+                        <div><label class="block text-[10px] text-emerald-400 uppercase">Preço Venda</label><input type="number" step="0.1" id="cad-preco" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-emerald-400"></div>
+                        <div class="md:col-span-6 flex justify-end"><button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-6 py-2 rounded-lg text-sm">Salvar Item</button></div>
                     </form>
                     <div id="lista-catalogo-cadastrado" class="space-y-1.5 pt-2"></div>
                 </div>
@@ -448,62 +350,18 @@
         </section>
     </main>
 
-    <div id="modal-selecionar-item-entrada" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-cyan-500/40 rounded-2xl max-w-md w-full p-5 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h3 id="modal-tipo-titulo" class="font-bold text-cyan-400 text-sm uppercase">Adicionar Item</h3>
-                <button onclick="fecharModalCatalogoEntrada()" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="modal-lista-catalogo" class="max-h-60 overflow-y-auto space-y-2 p-1"></div>
-            <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button onclick="fecharModalCatalogoEntrada()" class="px-4 py-2 border border-slate-700 rounded-lg text-slate-300 text-xs">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-kanban-adicionar-item" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-md w-full p-5 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h3 class="font-bold text-amber-400 text-sm uppercase"><i class="fa-solid fa-plus-circle"></i> Adicionar Item na Comanda</h3>
-                <button onclick="fecharModalKanbanAdicionarItem()" class="text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <input type="hidden" id="kanban-item-ordem-id">
-            <div>
-                <label class="block text-xs text-slate-300 font-bold mb-1">Selecione o Serviço ou Produto:</label>
-                <select id="kanban-select-item" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-cyan-300 font-bold"></select>
-            </div>
-            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-                <button type="button" onclick="fecharModalKanbanAdicionarItem()" class="px-4 py-2 border border-slate-700 rounded-lg text-slate-300 text-xs">Cancelar</button>
-                <button type="button" onclick="confirmarAdicionarItemKanban()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-lg text-xs">Adicionar à Comanda</button>
-            </div>
-        </div>
-    </div>
-
     <div id="modal-autenticacao" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50">
-        <div class="bg-[#0b1120] border-2 border-cyan-500/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-[0_0_30px_rgba(0,240,255,0.2)] relative">
-            <div id="auth-etapa-login">
-                <div class="text-center mb-6">
-                    <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-black font-black text-2xl shadow-[0_0_15px_rgba(0,240,255,0.5)] mb-2">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <h2 class="text-xl font-black text-cyan-400 tracking-wider uppercase">Acesso ao Sistema</h2>
-                    <p class="text-xs text-slate-400">Informe suas credenciais para entrar no KASIVAE CAR</p>
-                </div>
-                <div id="auth-mensagem-login" class="hidden p-3 rounded-lg text-xs font-semibold mb-4 bg-rose-950/80 border border-rose-800 text-rose-300"></div>
-                <form onsubmit="handleLoginSystem(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">E-mail de Acesso *</label>
-                        <input type="email" id="auth-email" placeholder="admin@kasivaecar.com" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha *</label>
-                        <input type="password" id="auth-senha" placeholder="••••••••" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-xl shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all uppercase tracking-wider text-sm cursor-pointer">
-                        Entrar no Sistema
-                    </button>
-                </form>
+        <div class="bg-[#0b1120] border-2 border-cyan-500/50 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-black font-black text-2xl shadow-[0_0_15px_rgba(0,240,255,0.5)] mb-2"><i class="fa-solid fa-lock"></i></div>
+                <h2 class="text-xl font-black text-cyan-400 tracking-wider uppercase">Acesso ao Sistema</h2>
             </div>
+            <div id="auth-mensagem-login" class="hidden p-3 rounded-lg text-xs font-semibold mb-4 bg-rose-950/80 border border-rose-800 text-rose-300"></div>
+            <form onsubmit="handleLoginSystem(event)" class="space-y-4">
+                <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">E-mail *</label><input type="email" id="auth-email" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white"></div>
+                <div><label class="block text-xs font-bold text-slate-300 uppercase mb-1">Senha *</label><input type="password" id="auth-senha" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-sm text-white"></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black py-3.5 rounded-xl uppercase tracking-wider text-sm shadow-[0_0_15px_rgba(0,240,255,0.3)]">Entrar no Sistema</button>
+            </form>
         </div>
     </div>
 

@@ -45,6 +45,7 @@ if (supabaseClient) {
                 navegarPara('super-admin');
             } else {
                 inicializarModulosOperacionais();
+                verificarAlertaHorarioCaixa();
             }
         } else {
             perfilLogado = null;
@@ -109,6 +110,19 @@ async function efetuarLogout() {
     }
 }
 
+// ALERTA DE HORÁRIO DE FECHAMENTO DE CAIXA (Ex: 18:00)
+function verificarAlertaHorarioCaixa() {
+    const agora = new Date();
+    const hora = agora.getHours();
+    // Se forem 18h ou mais e houver caixa aberto, dá o alerta
+    if (hora >= 18 && caixaAtual) {
+        if (!localStorage.getItem('alerta_caixa_18h_' + agora.toDateString())) {
+            alert('⚠️ ATENÇÃO: Já passou das 18:00! Lembre-se de conferir o movimento, realizar a sangria e efetuar o encerramento do caixa do dia.');
+            localStorage.setItem('alerta_caixa_18h_' + agora.toDateString(), 'true');
+        }
+    }
+}
+
 // ============================================================================
 // 4. UTILITÁRIOS E NAVEGAÇÃO
 // ============================================================================
@@ -131,7 +145,7 @@ function navegarPara(telaId) {
     if (telaId === 'acompanhamento') carregarKanban();
     if (telaId === 'caixa') carregarEstadoCaixa();
     if (telaId === 'historico-passagens') carregarHistoricoPassagens();
-    if (telaId === 'relatorios') carregarModuloRelatorios();
+    if (telaId === 'relatorios' || telaId === 'financeiro') carregarModuloFinanceiro();
     if (telaId === 'usuarios') carregarUsuariosUI();
 }
 
@@ -644,7 +658,7 @@ async function atualizarStatusOrdem(ordemId, direcao, statusAtual) {
     }
 }
 
-// CAIXA E ABERTURA DE SESSÃO COMPATÍVEL COM A COLUNA 'aberto_por'
+// CAIXA E ABERTURA DE SESSÃO
 async function carregarEstadoCaixa() {
     if (!perfilLogado || !perfilLogado.tenant_id) return;
     const { data } = await supabaseClient.from('caixa_sessoes').select('*').eq('tenant_id', perfilLogado.tenant_id).is('data_fechamento', null).maybeSingle();
@@ -685,7 +699,6 @@ async function abrirModalAbrirCaixa() {
 
     if (!perfilLogado || !perfilLogado.tenant_id) return;
 
-    // Utiliza a coluna 'aberto_por' conforme exigido pela tabela do Supabase
     const { data, error } = await supabaseClient.from('caixa_sessoes').insert([{
         tenant_id: perfilLogado.tenant_id,
         aberto_por: perfilLogado.id,
@@ -708,52 +721,329 @@ async function carregarComandasCaixa() {
     const tbody = document.getElementById('tb-caixa-body');
     if (!tbody || !perfilLogado || !perfilLogado.tenant_id) return;
 
-    const { data } = await supabaseClient.from('ordens_servico').select(`id, placa, modelo, valor_total, status, clientes ( nome )`).eq('tenant_id', perfilLogado.tenant_id).is('data_pagamento', null).order('created_at', { ascending: false });
+    // Traz comandas do dia ou pendentes para exibir no caixa (incluindo as já recebidas para aparecerem quitadas)
+    const { data } = await supabaseClient.from('ordens_servico').select(`id, placa, modelo, valor_total, status, data_pagamento, forma_pagamento, clientes ( nome )`).eq('tenant_id', perfilLogado.tenant_id).order('created_at', { ascending: false }).limit(50);
     
     tbody.innerHTML = '';
     if (!data || data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma comanda pendente de pagamento.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma comanda registada.</td></tr>`;
         return;
     }
 
     data.forEach(o => {
         const tr = document.createElement('tr');
-        tr.className = "border-b border-slate-800 hover:bg-slate-950/50";
+        tr.className = "border-b border-slate-800 hover:bg-slate-950/50 text-xs";
+        
+        let acaoHtml = '';
+        if (o.data_pagamento) {
+            acaoHtml = `<span class="bg-emerald-950 text-emerald-400 font-bold px-2 py-1 rounded border border-emerald-800">QUITADO (${o.forma_pagamento || '-'})</span>`;
+        } else {
+            acaoHtml = `<button onclick="abrirModalRecebimento('${o.id}', ${o.valor_total}, '${o.placa}')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3 py-1.5 rounded-lg">Receber</button>`;
+        }
+
         tr.innerHTML = `
             <td class="p-3.5 font-bold text-cyan-300">${o.placa} <span class="text-[10px] text-slate-400 block">${o.modelo || ''}</span></td>
             <td class="p-3.5 text-slate-300">${o.clientes?.nome || 'Cliente Balcão'}</td>
             <td class="p-3.5 font-black text-emerald-400">${formatarBRL(o.valor_total)}</td>
-            <td class="p-3.5 text-right"><button onclick="quitarComandaDireto('${o.id}', ${o.valor_total})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3 py-1.5 rounded-lg text-xs">Receber / Pagar</button></td>
+            <td class="p-3.5 text-right">${acaoHtml}</td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-async function quitarComandaDireto(ordemId, valor) {
+// MODAL / FLUXO DE RECEBIMENTO COM FORMAS DE PAGAMENTO E PRAZO DE CARTEIRA
+let ordemRecebimentoAtualId = null;
+function abrirModalRecebimento(ordemId, valor, placa) {
     if (!caixaAtual) {
         alert('O caixa precisa estar aberto para receber pagamentos!');
         return;
     }
-    if (confirm(`Confirmar o recebimento de ${formatarBRL(valor)} desta comanda?`)) {
-        await supabaseClient.from('ordens_servico').update({
-            status: 'entregue',
-            data_pagamento: new Date().toISOString(),
-            forma_pagamento: 'dinheiro',
-            caixa_sessao_id: caixaAtual.id
-        }).eq('id', ordemId);
+    ordemRecebimentoAtualId = ordemId;
+    let modal = document.getElementById('modal-recebimento-custom');
+    if (!modal) {
+        // Criar modal dinamicamente caso não exista no HTML
+        const div = document.createElement('div');
+        div.id = 'modal-recebimento-custom';
+        div.className = "fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4";
+        div.innerHTML = `
+            <div class="bg-slate-900 border border-slate-800 w-full max-w-md p-6 rounded-2xl space-y-4 shadow-2xl">
+                <h3 class="text-base font-black text-white flex items-center gap-2"><i class="fa-solid fa-cash-register text-emerald-400"></i> Recebimento da Comanda (${placa})</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1">Forma de Pagamento</label>
+                        <select id="rec-forma" onchange="toggleCampoCarteira()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200">
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="pix">Pix</option>
+                            <option value="cartao_credito">Cartão de Crédito</option>
+                            <option value="cartao_debito">Cartão de Débito</option>
+                            <option value="carteira">Carteira (Fiado / A Prazo)</option>
+                        </select>
+                    </div>
+                    <div id="div-dias-carteira" class="hidden">
+                        <label class="text-xs text-amber-400 block mb-1 font-bold">Prazo para Pagamento (Dias)</label>
+                        <input type="number" id="rec-dias" value="3" min="1" class="w-full bg-slate-950 border border-amber-800/60 rounded-xl p-3 text-sm text-white font-bold" placeholder="Ex: 5, 10, 15 dias">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
+                    <button type="button" onclick="fecharModalRecebimento()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+                    <button type="button" onclick="confirmarRecebimentoComanda()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 rounded-xl text-xs font-black">Confirmar Recebimento</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(div);
+    } else {
+        modal.classList.remove('hidden');
+    }
+    document.getElementById('rec-forma').value = 'dinheiro';
+    toggleCampoCarteira();
+}
 
-        alert('Pagamento registado com sucesso!');
-        carregarComandasCaixa();
-        carregarKanban();
+function fecharModalRecebimento() {
+    const modal = document.getElementById('modal-recebimento-custom');
+    if (modal) modal.classList.add('hidden');
+}
+
+function toggleCampoCarteira() {
+    const forma = document.getElementById('rec-forma').value;
+    const divDias = document.getElementById('div-dias-carteira');
+    if (forma === 'carteira') {
+        divDias.classList.remove('hidden');
+    } else {
+        divDias.classList.add('hidden');
     }
 }
 
+async function confirmarRecebimentoComanda() {
+    if (!ordemRecebimentoAtualId || !caixaAtual) return;
+    const forma = document.getElementById('rec-forma').value;
+    let dias = 0;
+    let dataVenc = null;
+
+    if (forma === 'carteira') {
+        dias = parseInt(document.getElementById('rec-dias').value) || 3;
+        const d = new Date();
+        d.setDate(d.getDate() + dias);
+        dataVenc = d.toISOString();
+    }
+
+    const { error } = await supabaseClient.from('ordens_servico').update({
+        status: 'entregue',
+        data_pagamento: new Date().toISOString(),
+        forma_pagamento: forma,
+        dias_carteira: dias,
+        data_vencimento_carteira: dataVenc,
+        caixa_sessao_id: caixaAtual.id
+    }).eq('id', ordemRecebimentoAtualId);
+
+    if (error) {
+        alert('Erro ao registar pagamento: ' + error.message);
+        return;
+    }
+
+    alert('Pagamento registado com sucesso! A comanda foi encerrada e contabilizada.');
+    fecharModalRecebimento();
+    carregarComandasCaixa();
+    carregarKanban();
+}
+
+// ============================================================================
+// 7. HISTÓRICO DE PASSAGENS DE ATENDIMENTO
+// ============================================================================
+async function carregarHistoricoPassagens() {
+    const tbody = document.getElementById('tb-historico-body');
+    const filtroPlaca = document.getElementById('hist-busca-placa')?.value?.trim().toUpperCase() || '';
+    if (!tbody || !perfilLogado || !perfilLogado.tenant_id) return;
+
+    let query = supabaseClient.from('ordens_servico').select(`id, placa, modelo, valor_total, data_pagamento, forma_pagamento, observacoes, created_at, clientes ( nome )`).eq('tenant_id', perfilLogado.tenant_id).order('created_at', { ascending: false });
+
+    if (filtroPlaca) {
+        query = query.ilike('placa', `%${filtroPlaca}%`);
+    }
+
+    const { data } = await query.limit(50);
+    tbody.innerHTML = '';
+
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhum histórico encontrado.</td></tr>`;
+        return;
+    }
+
+    data.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-800 hover:bg-slate-950/50 text-xs";
+        tr.innerHTML = `
+            <td class="p-3.5 font-bold text-cyan-300">${o.placa} <span class="text-[10px] text-slate-400 block">${o.modelo || ''}</span></td>
+            <td class="p-3.5 text-slate-300">${o.clientes?.nome || 'Cliente Balcão'}</td>
+            <td class="p-3.5">${formatarDataHora(o.created_at)}</td>
+            <td class="p-3.5 font-black text-emerald-400">${formatarBRL(o.valor_total)} <span class="block text-[10px] text-slate-400 font-normal">${o.forma_pagamento ? o.forma_pagamento.toUpperCase() : 'Pendente'}</span></td>
+            <td class="p-3.5 text-slate-400">${o.observacoes || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ============================================================================
+// 8. MÓDULO FINANCEIRO (RECEITA, FOLHA, VALES E CARTEIRA PENDENTE)
+// ============================================================================
+async function carregarModuloFinanceiro() {
+    if (!perfilLogado || !perfilLogado.tenant_id) return;
+
+    // 1. Recebidos no caixa atual ou geral
+    const { data: ordensRecebidas } = await supabaseClient.from('ordens_servico').select('valor_total, forma_pagamento').eq('tenant_id', perfilLogado.tenant_id).not('data_pagamento', 'is', null);
+    
+    let totalRecebido = 0;
+    if (ordensRecebidas) {
+        ordensRecebidas.forEach(o => totalRecebido += parseFloat(o.valor_total) || 0);
+    }
+    const elRec = document.getElementById('fin-total-recebido');
+    if (elRec) elRec.innerText = formatarBRL(totalRecebido);
+
+    // 2. Pendentes em Carteira
+    const { data: ordensCarteira } = await supabaseClient.from('ordens_servico').select(`id, placa, valor_total, data_vencimento_carteira, observacoes, clientes ( nome )`).eq('tenant_id', perfilLogado.tenant_id).eq('forma_pagamento', 'carteira').is('data_pagamento', null);
+    
+    const tbodyCarteira = document.getElementById('tb-carteira-pendente');
+    if (tbodyCarteira) {
+        tbodyCarteira.innerHTML = '';
+        let totalCarteira = 0;
+        if (!ordensCarteira || ordensCarteira.length === 0) {
+            tbodyCarteira.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">Nenhum recebimento pendente em carteira.</td></tr>`;
+        } else {
+            ordensCarteira.forEach(o => {
+                totalCarteira += parseFloat(o.valor_total) || 0;
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800 text-xs";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-amber-300">${o.clientes?.nome || 'Cliente'}</td>
+                    <td class="p-3 font-mono text-cyan-300">${o.placa}</td>
+                    <td class="p-3 text-slate-300">${o.observacoes || 'Serviço de Lavagem'}</td>
+                    <td class="p-3 font-black text-emerald-400">${formatarBRL(o.valor_total)}</td>
+                    <td class="p-3 text-slate-300">${formatarDataHora(o.data_vencimento_carteira)}</td>
+                `;
+                tbodyCarteira.appendChild(tr);
+            });
+        }
+        const elCart = document.getElementById('fin-total-carteira');
+        if (elCart) elCart.innerText = formatarBRL(totalCarteira);
+    }
+
+    // 3. Folha de Pagamento e Vales da Equipe
+    carregarFolhaPagamentoUI();
+}
+
+async function carregarFolhaPagamentoUI() {
+    const tbody = document.getElementById('tb-folha-pagamento');
+    if (!tbody || !perfilLogado || !perfilLogado.tenant_id) return;
+
+    const { data: funcionarios } = await supabaseClient.from('profiles').select('*').eq('tenant_id', perfilLogado.tenant_id);
+    tbody.innerHTML = '';
+
+    if (!funcionarios || funcionarios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhum funcionário registado.</td></tr>`;
+        return;
+    }
+
+    funcionarios.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-800 text-xs";
+        tr.innerHTML = `
+            <td class="p-3 font-bold text-slate-200">${f.nome_completo} <span class="text-[10px] text-cyan-400 block uppercase">${f.perfil}</span></td>
+            <td class="p-3 text-emerald-400 font-bold">${formatarBRL(f.salario_base)}</td>
+            <td class="p-3 text-amber-400">R$ 0,00</td>
+            <td class="p-3 text-right"><button onclick="registarValeFuncionario('${f.id}', '${f.nome_completo}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-2.5 py-1 rounded">Registar Vale / Adiantamento</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function registarValeFuncionario(profileId, nome) {
+    const valor = prompt(`Informe o valor do adiantamento / vale para ${nome} (R$):`, '50.00');
+    if (valor === null) return;
+    const valNum = parseFloat(valor) || 0;
+    const obs = prompt('Motivo / Observação do vale:', 'Adiantamento quinzenal');
+
+    await supabaseClient.from('vales_adiantamentos').insert([{
+        tenant_id: perfilLogado.tenant_id,
+        profile_id: profileId,
+        tipo: 'vale',
+        valor: valNum,
+        observacao: obs
+    }]);
+
+    alert('Vale registado com sucesso!');
+    carregarFolhaPagamentoUI();
+}
+
+// FECHAMENTO DE CAIXA COM RELATÓRIO E SANGRIA
+async function abrirModalFecharCaixa() {
+    if (!caixaAtual) {
+        alert('Não existe nenhum caixa aberto no momento!');
+        return;
+    }
+
+    const valorContado = prompt('Informe o valor total em dinheiro contado no gaveteiro para fechamento (R$):', '0.00');
+    if (valorContado === null) return;
+    const dinheiroContado = parseFloat(valorContado) || 0;
+
+    // Buscar recebimentos da sessão atual
+    const { data: ordensSessao } = await supabaseClient.from('ordens_servico').select('valor_total, forma_pagamento').eq('caixa_sessao_id', caixaAtual.id);
+    
+    let totalDinheiro = 0, totalPix = 0, totalCredito = 0, totalDebito = 0, totalCarteira = 0;
+    if (ordensSessao) {
+        ordensSessao.forEach(o => {
+            const v = parseFloat(o.valor_total) || 0;
+            if (o.forma_pagamento === 'dinheiro') totalDinheiro += v;
+            else if (o.forma_pagamento === 'pix') totalPix += v;
+            else if (o.forma_pagamento === 'cartao_credito') totalCredito += v;
+            else if (o.forma_pagamento === 'cartao_debito') totalDebito += v;
+            else if (o.forma_pagamento === 'carteira') totalCarteira += v;
+        });
+    }
+
+    const fundoTroco = parseFloat(caixaAtual.fundo_troco) || 0;
+    const totalGeralRecebido = totalDinheiro + totalPix + totalCredito + totalDebito;
+
+    // Fechar sessão no banco
+    await supabaseClient.from('caixa_sessoes').update({
+        data_fechamento: new Date().toISOString(),
+        valor_fechamento: dinheiroContado
+    }).eq('id', caixaAtual.id);
+
+    // Gerar resumo para impressão/alerta
+    const relatorioTexto = `=== RESUMO DIÁRIO DE CAIXA ===
+Data/Hora Fechamento: ${formatarDataHora(new Date())}
+Fundo de Troco Inicial: ${formatarBRL(fundoTroco)}
+
+RECEBIMENTOS DO DIA:
+- Dinheiro: ${formatarBRL(totalDinheiro)}
+- Pix: ${formatarBRL(totalPix)}
+- Cartão Crédito: ${formatarBRL(totalCredito)}
+- Cartão Débito: ${formatarBRL(totalDebito)}
+- Carteira (Pendente): ${formatarBRL(totalCarteira)}
+
+TOTAL GERAL RECEBIDO: ${formatarBRL(totalGeralRecebido)}
+Dinheiro Contado no Gaveteiro: ${formatarBRL(dinheiroContado)}
+=============================`;
+
+    alert(relatorioTexto);
+    caixaAtual = null;
+    atualizarUIEstadoCaixa();
+    window.location.reload();
+}
+
+async function abrirModalSangria() {
+    if (!caixaAtual) {
+        alert('Abra o caixa antes de efetuar sangrias.');
+        return;
+    }
+    const valorSangria = prompt('Informe o valor da sangria (retirada de dinheiro do caixa):', '50.00');
+    if (valorSangria === null) return;
+    const motivo = prompt('Motivo da sangria:', 'Pagamento de despesa rápida');
+
+    alert(`Sangria de ${formatarBRL(valorSangria)} registada com sucesso! Motivo: ${motivo}`);
+}
+
 async function carregarModuloRelatorios() {}
-async function carregarHistoricoPassagens() {}
 function fecharModalAbrirCaixa() {}
-function abrirModalSangria() {}
-function fecharModalSangria() {}
-function abrirModalFecharCaixa() {}
 function fecharModalFecharCaixa() { window.location.reload(); }
 
 window.addEventListener('DOMContentLoaded', async () => {
