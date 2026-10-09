@@ -250,18 +250,23 @@ async function carregarEquipe() {
     popularSelectsEquipe();
 }
 
+// FILTRO INTELIGENTE DE EQUIPE POR CARGO NOS SELECTS DA NOVA ENTRADA
 function popularSelectsEquipe() {
-    ['ent-lavador', 'ent-aspirador', 'ent-secador', 'adv-usuario'].forEach(id => {
-        const sel = document.getElementById(id);
+    const preencherSelectFiltro = (elementId, perfilDesejado) => {
+        const sel = document.getElementById(elementId);
         if (!sel) return;
         sel.innerHTML = '<option value="">Selecione...</option>';
-        equipeCache.forEach(u => {
+        equipeCache.filter(u => u.perfil === perfilDesejado).forEach(u => {
             const opt = document.createElement('option');
             opt.value = u.id;
             opt.textContent = `${u.nome_completo} (${u.perfil})`;
             sel.appendChild(opt);
         });
-    });
+    };
+
+    preencherSelectFiltro('ent-lavador', 'lavador');
+    preencherSelectFiltro('ent-aspirador', 'aspirador');
+    preencherSelectFiltro('ent-secador', 'secador');
 }
 
 function renderizarCatalogoUI() {
@@ -643,7 +648,7 @@ async function atualizarStatusOrdem(ordemId, direcao, statusAtual) {
     }
 }
 
-// CAIXA E RELATÓRIOS
+// CAIXA E ABERTURA DE SESSÃO
 async function carregarEstadoCaixa() {
     if (!perfilLogado || !perfilLogado.tenant_id) return;
     const { data } = await supabaseClient.from('caixa_sessoes').select('*').eq('tenant_id', perfilLogado.tenant_id).is('data_fechamento', null).maybeSingle();
@@ -651,28 +656,108 @@ async function carregarEstadoCaixa() {
     atualizarUIEstadoCaixa();
     carregarComandasCaixa();
 }
-function atualizarUIEstadoCaixa() {}
-async function carregarComandasCaixa() {}
+
+function atualizarUIEstadoCaixa() {
+    const pill = document.getElementById('cx-status-pill');
+    const headerPill = document.getElementById('badge-status-caixa-header');
+    const headerLabel = document.getElementById('label-caixa-status-header');
+    const btnAbrir = document.getElementById('btn-abrir-caixa');
+    const btnSangria = document.getElementById('btn-sangria-caixa');
+    const btnFechar = document.getElementById('btn-fechar-caixa');
+
+    if (caixaAtual) {
+        if (pill) { pill.className = "text-xs font-black px-3 py-1 rounded-full uppercase bg-emerald-950 text-emerald-400 border border-emerald-800"; pill.innerText = "ABERTO"; }
+        if (headerPill) { headerPill.className = "flex items-center gap-2 bg-emerald-950/80 border border-emerald-800/80 text-emerald-300 px-3 py-1 rounded-full text-xs font-bold"; }
+        if (headerLabel) { headerLabel.innerText = "CAIXA ABERTO"; }
+        if (btnAbrir) btnAbrir.classList.add('hidden');
+        if (btnSangria) btnSangria.classList.remove('hidden');
+        if (btnFechar) btnFechar.classList.remove('hidden');
+    } else {
+        if (pill) { pill.className = "text-xs font-black px-3 py-1 rounded-full uppercase bg-rose-950 text-rose-400 border border-rose-800"; pill.innerText = "FECHADO"; }
+        if (headerPill) { headerPill.className = "flex items-center gap-2 bg-rose-950/80 border border-rose-800/80 text-rose-300 px-3 py-1 rounded-full text-xs font-bold"; }
+        if (headerLabel) { headerLabel.innerText = "CAIXA FECHADO"; }
+        if (btnAbrir) btnAbrir.classList.remove('hidden');
+        if (btnSangria) btnSangria.classList.add('hidden');
+        if (btnFechar) btnFechar.classList.add('hidden');
+    }
+}
+
+async function abrirModalAbrirCaixa() {
+    const valorTroco = prompt('Informe o valor do troco inicial / fundo de caixa (R$):', '100.00');
+    if (valorTroco === null) return;
+    const fundo = parseFloat(valorTroco) || 0;
+
+    if (!perfilLogado || !perfilLogado.tenant_id) return;
+
+    const { data, error } = await supabaseClient.from('caixa_sessoes').insert([{
+        tenant_id: perfilLogado.tenant_id,
+        usuario_abertura_id: perfilLogado.id,
+        fundo_troco: fundo,
+        data_abertura: new Date().toISOString()
+    }]).select('*').single();
+
+    if (error) {
+        alert('Erro ao abrir o caixa: ' + error.message);
+        return;
+    }
+
+    alert('Caixa aberto com sucesso!');
+    caixaAtual = data;
+    atualizarUIEstadoCaixa();
+    carregarComandasCaixa();
+}
+
+async function carregarComandasCaixa() {
+    const tbody = document.getElementById('tb-caixa-body');
+    if (!tbody || !perfilLogado || !perfilLogado.tenant_id) return;
+
+    const { data } = await supabaseClient.from('ordens_servico').select(`id, placa, modelo, valor_total, status, clientes ( nome )`).eq('tenant_id', perfilLogado.tenant_id).is('data_pagamento', null).order('created_at', { ascending: false });
+    
+    tbody.innerHTML = '';
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">Nenhuma comanda pendente de pagamento.</td></tr>`;
+        return;
+    }
+
+    data.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-800 hover:bg-slate-950/50";
+        tr.innerHTML = `
+            <td class="p-3.5 font-bold text-cyan-300">${o.placa} <span class="text-[10px] text-slate-400 block">${o.modelo || ''}</span></td>
+            <td class="p-3.5 text-slate-300">${o.clientes?.nome || 'Cliente Balcão'}</td>
+            <td class="p-3.5 font-black text-emerald-400">${formatarBRL(o.valor_total)}</td>
+            <td class="p-3.5 text-right"><button onclick="quitarComandaDireto('${o.id}', ${o.valor_total})" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3 py-1.5 rounded-lg text-xs">Receber / Pagar</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function quitarComandaDireto(ordemId, valor) {
+    if (!caixaAtual) {
+        alert('O caixa precisa estar aberto para receber pagamentos!');
+        return;
+    }
+    if (confirm(`Confirmar o recebimento de ${formatarBRL(valor)} desta comanda?`)) {
+        await supabaseClient.from('ordens_servico').update({
+            status: 'entregue',
+            data_pagamento: new Date().toISOString(),
+            forma_pagamento: 'dinheiro',
+            caixa_sessao_id: caixaAtual.id
+        }).eq('id', ordemId);
+
+        alert('Pagamento registado com sucesso!');
+        carregarComandasCaixa();
+        carregarKanban();
+    }
+}
+
 async function carregarModuloRelatorios() {}
 async function carregarHistoricoPassagens() {}
-async function abrirModalAbrirCaixa() {}
 function fecharModalAbrirCaixa() {}
-function confirmarAberturaCaixa(e) { e.preventDefault(); }
 function abrirModalSangria() {}
 function fecharModalSangria() {}
-function confirmarSangriaCaixa(e) { e.preventDefault(); }
 function abrirModalFecharCaixa() {}
 function fecharModalFecharCaixa() { window.location.reload(); }
-function calcularDiferencaFechamento() {}
-function confirmarFechamentoCaixa(e) { e.preventDefault(); }
-function abrirModalPagamento() {}
-function fecharModalPagamento() {}
-function selecionarFormaPagamento() {}
-function confirmarBaixaCaixa() {}
-function abrirModalAdiantamento() {}
-function fecharModalAdiantamento() {}
-function salvarAdiantamento(e) { e.preventDefault(); }
-function quitarFiado() {}
 
 window.addEventListener('DOMContentLoaded', async () => {
     if (!supabaseClient) alert('Erro ao conectar com Supabase.');
