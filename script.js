@@ -252,7 +252,6 @@ function popularSelectsEquipe() {
         const sel = document.getElementById(elementId);
         if (!sel) return;
         sel.innerHTML = '<option value="">Selecione...</option>';
-        // Filtra quem tem o perfil correto OU é admin (coringa)
         equipeCache.filter(u => u.perfil === perfilDesejado || u.perfil === 'admin').forEach(u => {
             const opt = document.createElement('option');
             opt.value = u.id;
@@ -645,7 +644,7 @@ async function atualizarStatusOrdem(ordemId, direcao, statusAtual) {
     }
 }
 
-// CAIXA E ABERTURA DE SESSÃO
+// CAIXA E ABERTURA DE SESSÃO COMPATÍVEL COM A COLUNA 'aberto_por'
 async function carregarEstadoCaixa() {
     if (!perfilLogado || !perfilLogado.tenant_id) return;
     const { data } = await supabaseClient.from('caixa_sessoes').select('*').eq('tenant_id', perfilLogado.tenant_id).is('data_fechamento', null).maybeSingle();
@@ -686,9 +685,10 @@ async function abrirModalAbrirCaixa() {
 
     if (!perfilLogado || !perfilLogado.tenant_id) return;
 
+    // Utiliza a coluna 'aberto_por' conforme exigido pela tabela do Supabase
     const { data, error } = await supabaseClient.from('caixa_sessoes').insert([{
         tenant_id: perfilLogado.tenant_id,
-        usuario_abertura_id: perfilLogado.id,
+        aberto_por: perfilLogado.id,
         fundo_troco: fundo,
         data_abertura: new Date().toISOString()
     }]).select('*').single();
