@@ -699,9 +699,11 @@ async function abrirModalAbrirCaixa() {
 
     if (!perfilLogado || !perfilLogado.tenant_id) return;
 
+    // Enviamos a informação para AMBAS as colunas para evitar qualquer erro de restrição
     const { data, error } = await supabaseClient.from('caixa_sessoes').insert([{
         tenant_id: perfilLogado.tenant_id,
         aberto_por: perfilLogado.id,
+        usuario_abertura_id: perfilLogado.id,
         fundo_troco: fundo,
         data_abertura: new Date().toISOString()
     }]).select('*').single();
