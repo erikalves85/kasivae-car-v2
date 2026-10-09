@@ -403,7 +403,7 @@ function cancelarEdicaoUsuario() {
     document.getElementById('usr-salario').value = '';
     document.getElementById('usr-comissao').value = '';
 
-    document.getElementById('form-usr-titulo').innerHTML = `<i class="fa-solid fa-users-gear"></i> Cadastrar / Editar Usuário`;
+    document.getElementById('form-usr-titulo').innerHTML = `<i class="fa-solid fa-users-gear"></i> Cadastrar / Editar Funcionário ou Usuário`;
     document.getElementById('btn-cancelar-edit-usr').classList.add('hidden');
     document.getElementById('btn-salvar-usr').innerText = 'Salvar Usuário';
 }

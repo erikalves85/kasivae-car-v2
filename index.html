@@ -365,42 +365,47 @@
             </div>
 
             <div id="screen-usuarios" class="view-screen hidden space-y-6">
-                <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                        <h3 id="form-usr-titulo" class="font-bold text-cyan-400 text-sm uppercase">Cadastrar / Editar Usuário</h3>
-                        <button type="button" id="btn-cancelar-edit-usr" onclick="cancelarEdicaoUsuario()" class="hidden text-xs bg-slate-800 text-rose-400 px-2.5 py-1 rounded">Cancelar</button>
+                <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 space-y-5">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <h3 id="form-usr-titulo" class="font-bold text-cyan-400 text-sm uppercase">Cadastrar / Editar Funcionário ou Usuário</h3>
+                        <button type="button" id="btn-cancelar-edit-usr" onclick="cancelarEdicaoUsuario()" class="hidden text-xs bg-slate-800 text-rose-400 px-3 py-1 rounded">Cancelar</button>
                     </div>
-                    <form onsubmit="salvarUsuario(event)" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <form onsubmit="salvarUsuario(event)" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                         <input type="hidden" id="usr-id-edit">
-                        <div class="md:col-span-2">
-                            <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Nome *</label>
-                            <input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white" placeholder="Nome Completo">
+                        
+                        <div class="md:col-span-5">
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Nome Completo *</label>
+                            <input type="text" id="usr-nome" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none" placeholder="Ex: João Batista">
                         </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Perfil *</label>
-                            <select id="usr-perfil" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-cyan-300">
-                                <option value="atendente">Atendente</option>
+
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Perfil / Cargo *</label>
+                            <select id="usr-perfil" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-cyan-300 focus:border-cyan-400 focus:outline-none">
                                 <option value="lavador">Lavador</option>
                                 <option value="aspirador">Aspirador</option>
                                 <option value="secador">Secador</option>
+                                <option value="atendente">Atendente</option>
                                 <option value="caixa">Caixa</option>
                                 <option value="gerente">Gerente</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Salário Fixo</label>
-                            <input type="number" step="0.01" id="usr-salario" placeholder="0,00" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Salário Fixo</label>
+                            <input type="number" step="0.01" id="usr-salario" placeholder="0,00" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
                         </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-400 uppercase mb-0.5">Comissão (%)</label>
-                            <input type="number" step="0.1" id="usr-comissao" placeholder="0%" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-sm text-white">
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-1">Comissão (%)</label>
+                            <input type="number" step="0.1" id="usr-comissao" placeholder="0%" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
                         </div>
-                        <div class="md:col-span-4 flex justify-end">
-                            <button type="submit" id="btn-salvar-usr" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2 rounded-lg text-sm">Salvar Usuário</button>
+
+                        <div class="md:col-span-12 flex justify-end pt-2">
+                            <button type="submit" id="btn-salvar-usr" class="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all">Salvar Usuário</button>
                         </div>
                     </form>
-                    <div id="lista-usuarios-cadastrados" class="space-y-1.5 pt-2"></div>
+                    <div id="lista-usuarios-cadastrados" class="space-y-2 pt-3"></div>
                 </div>
             </div>
 
